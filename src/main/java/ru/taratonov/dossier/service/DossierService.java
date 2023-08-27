@@ -25,23 +25,20 @@ public class DossierService {
     private final String TOPIC_CREDIT_ISSUED = "credit-issued";
     private final String TOPIC_APPLICATION_DENIED = "application-denied";
 
-    @KafkaListener(topics = {TOPIC_FINISH_REGISTRATION}, groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = {TOPIC_FINISH_REGISTRATION, TOPIC_CREATE_DOCUMENTS, TOPIC_SEND_SES,
+            TOPIC_CREDIT_ISSUED, TOPIC_APPLICATION_DENIED}, groupId = "${spring.kafka.consumer.group-id}")
     public void listen(String message) throws JsonProcessingException {
         EmailMessageDTO emailMessageDTO = objectMapper.readValue(message, EmailMessageDTO.class);
         log.info("get message {}", emailMessageDTO);
         emailSenderService.sendSimpleEmail(emailMessageDTO);
     }
 
-    @KafkaListener(topics = {TOPIC_CREATE_DOCUMENTS}, groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = {TOPIC_SEND_DOCUMENTS}, groupId = "${spring.kafka.consumer.group-id}")
     public void get(String message) throws IOException, MessagingException {
         EmailMessageDTO emailMessageDTO = objectMapper.readValue(message, EmailMessageDTO.class);
         log.info("get message {}", emailMessageDTO);
         emailSenderService.sendEmailWithAttachment(emailMessageDTO);
     }
-
-
-
-
 
 
 }

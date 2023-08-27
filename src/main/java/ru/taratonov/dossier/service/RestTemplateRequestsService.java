@@ -7,7 +7,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import ru.taratonov.dossier.dto.Credit;
+import ru.taratonov.dossier.dto.ApplicationDTO;
 import ru.taratonov.dossier.util.DossierResponseErrorHandler;
 
 import java.util.Objects;
@@ -27,10 +27,10 @@ public class RestTemplateRequestsService {
                 .build();
     }
 
-    public Credit requestToGetApplication(Long id) {
-        log.info("request to get credit to deal with id {}", id);
-        ResponseEntity<Credit> responseEntity =
-                restTemplate.getForEntity(String.join("/", PATH_TO_DEAL_GET_CREDIT, id.toString(), "credit"), Credit.class);
+    public ApplicationDTO requestToGetApplication(Long id) {
+        log.info("request to get application to deal with id {}", id);
+        ResponseEntity<ApplicationDTO> responseEntity =
+                restTemplate.getForEntity(String.join("/", PATH_TO_DEAL_GET_CREDIT, id.toString()), ApplicationDTO.class);
         return Objects.requireNonNull(responseEntity.getBody());
     }
 }

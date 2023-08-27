@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
-import ru.taratonov.dossier.dto.Credit;
+import ru.taratonov.dossier.dto.ApplicationDTO;
 import ru.taratonov.dossier.dto.PaymentScheduleElement;
 
 import java.io.FileWriter;
@@ -21,7 +21,7 @@ public class AttachmentGeneratorService {
     private final RestTemplateRequestsService restTemplateRequestsService;
 
     public FileSystemResource generateCreditInformation(Long id) {
-        Credit credit = getCreditFromDeal(id);
+        ApplicationDTO applicationDTO = getCreditFromDeal(id);
         Path information;
         try {
             information = Files.createTempFile("information", ".txt");
@@ -30,13 +30,18 @@ public class AttachmentGeneratorService {
             throw new RuntimeException(e);
         }
         try (FileWriter fileWriter = new FileWriter(information.toFile())) {
-            fileWriter.write("Loan mount: " + credit.getAmount());
-            fileWriter.write("\nTerm: " + credit.getTerm());
-            fileWriter.write("\nMonthly payment: " + credit.getMonthlyPayment());
-            fileWriter.write("\nRate: " + credit.getRate());
-            fileWriter.write("\nPsk: " + credit.getPsk());
-            fileWriter.write("\nInsurance enable: " + credit.getInsuranceEnable());
-            fileWriter.write("\nSalary client: " + credit.getSalaryClient());
+            fileWriter.write(String.join(" ",
+                    "Credit information for",
+                    applicationDTO.getLastName(),
+                    applicationDTO.getFirstName(),
+                    applicationDTO.getMiddleName()));
+            fileWriter.write("\nLoan mount: " + applicationDTO.getAmount());
+            fileWriter.write("\nTerm: " + applicationDTO.getTerm());
+            fileWriter.write("\nMonthly payment: " + applicationDTO.getMonthlyPayment());
+            fileWriter.write("\nRate: " + applicationDTO.getRate());
+            fileWriter.write("\nPsk: " + applicationDTO.getPsk());
+            fileWriter.write("\nInsurance enable: " + applicationDTO.getInsuranceEnable());
+            fileWriter.write("\nSalary client: " + applicationDTO.getSalaryClient());
         } catch (IOException e) {
             log.error("error of writing data to file");
             throw new RuntimeException(e);
@@ -49,8 +54,8 @@ public class AttachmentGeneratorService {
         return fileSystemResource;
     }
 
-    public FileSystemResource generatePaymentScheduleInformation(Long id){
-        Credit credit = getCreditFromDeal(id);
+    public FileSystemResource generatePaymentScheduleInformation(Long id) {
+        ApplicationDTO applicationDTO = getCreditFromDeal(id);
         Path information;
         try {
             information = Files.createTempFile("Payment schedule", ".txt");
@@ -58,16 +63,21 @@ public class AttachmentGeneratorService {
             log.error("error of creating temp file");
             throw new RuntimeException(e);
         }
-        try(FileWriter fileWriter = new FileWriter(information.toFile())) {
-            List<PaymentScheduleElement> paymentSchedule = credit.getPaymentSchedule();
-            for (PaymentScheduleElement paymentScheduleElement: paymentSchedule) {
-                fileWriter.write( "Payment number: " + paymentScheduleElement.getNumber());
-                fileWriter.write( "\nPayment date: " + paymentScheduleElement.getDate());
-                fileWriter.write( "\nTotal payment: " + paymentScheduleElement.getTotalPayment());
-                fileWriter.write( "\nInterest payment: " + paymentScheduleElement.getInterestPayment());
-                fileWriter.write( "\nDebt payment: " + paymentScheduleElement.getDebtPayment());
-                fileWriter.write( "\nRemaining debt: " + paymentScheduleElement.getRemainingDebt());
-                fileWriter.write( "\n\n");
+        try (FileWriter fileWriter = new FileWriter(information.toFile())) {
+            List<PaymentScheduleElement> paymentSchedule = applicationDTO.getPaymentSchedule();
+            fileWriter.write(String.join(" ",
+                    "Payment schedule for",
+                    applicationDTO.getLastName(),
+                    applicationDTO.getFirstName(),
+                    applicationDTO.getMiddleName()));
+            for (PaymentScheduleElement paymentScheduleElement : paymentSchedule) {
+                fileWriter.write("\nPayment number: " + paymentScheduleElement.getNumber());
+                fileWriter.write("\nPayment date: " + paymentScheduleElement.getDate());
+                fileWriter.write("\nTotal payment: " + paymentScheduleElement.getTotalPayment());
+                fileWriter.write("\nInterest payment: " + paymentScheduleElement.getInterestPayment());
+                fileWriter.write("\nDebt payment: " + paymentScheduleElement.getDebtPayment());
+                fileWriter.write("\nRemaining debt: " + paymentScheduleElement.getRemainingDebt());
+                fileWriter.write("\n\n");
             }
         } catch (IOException e) {
             log.error("error of writing data to file");
@@ -80,9 +90,9 @@ public class AttachmentGeneratorService {
         return fileSystemResource;
     }
 
-    private Credit getCreditFromDeal(Long id){
-        Credit credit = restTemplateRequestsService.requestToGetApplication(id);
-        log.debug("request to deal successfully completed");
-        return credit;
+    private ApplicationDTO getCreditFromDeal(Long id) {
+        ApplicationDTO applicationDTO = restTemplateRequestsService.requestToGetApplication(id);
+        log.info("request to deal successfully completed");
+        return applicationDTO;
     }
 }

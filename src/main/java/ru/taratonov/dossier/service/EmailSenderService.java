@@ -22,13 +22,13 @@ public class EmailSenderService {
     public void sendSimpleEmail(EmailMessageDTO emailMessageDTO) {
         SimpleMailMessage simpleMailMessage = initializeSimpleMessage(emailMessageDTO);
         emailSender.send(simpleMailMessage);
-        log.info("message was sent to {} with text {}", emailMessageDTO.getEmailAddress(), simpleMailMessage.getText());
+        log.info("message was sent to {} ", emailMessageDTO.getEmailAddress());
     }
 
     public void sendEmailWithAttachment(EmailMessageDTO emailMessageDTO) throws MessagingException {
         MimeMessage mimeMessage = initializeMessageWithAttachment(emailMessageDTO);
         emailSender.send(mimeMessage);
-        log.info("message was sent to {} with text {}", emailMessageDTO.getEmailAddress(), mimeMessage.getDescription());
+        log.info("message with attachment was sent to {}", emailMessageDTO.getEmailAddress());
     }
 
     private SimpleMailMessage initializeSimpleMessage(EmailMessageDTO emailMessageDTO) {
@@ -37,6 +37,7 @@ public class EmailSenderService {
         simpleMailMessage.setTo(emailMessageDTO.getEmailAddress());
         simpleMailMessage.setSubject(emailMessageDTO.getTheme().getTitle());
         simpleMailMessage.setText(generateEmailText(emailMessageDTO));
+        log.debug("simple message was initialized");
         return simpleMailMessage;
     }
 
@@ -51,6 +52,7 @@ public class EmailSenderService {
                 attachmentGeneratorService.generateCreditInformation(emailMessageDTO.getApplicationId()));
         mimeMessageHelper.addAttachment("Payment schedule.txt",
                 attachmentGeneratorService.generatePaymentScheduleInformation(emailMessageDTO.getApplicationId()));
+        log.debug("message with attachment was initialized");
         return mimeMessage;
     }
 
@@ -59,9 +61,14 @@ public class EmailSenderService {
         switch (emailMessageDTO.getTheme()) {
             case FINISH_REGISTRATION ->
                     message = emailTextGeneratorService.generateFinishRegistrationText(emailMessageDTO);
-            case CREATE_DOCUMENTS -> message = emailTextGeneratorService.generateCreateDocumentsText(emailMessageDTO);
+            case CREATE_DOCUMENTS -> message = emailTextGeneratorService.generateSendDocumentsText(emailMessageDTO);
+            case SEND_DOCUMENTS -> message = emailTextGeneratorService.generateSignDocumentsText(emailMessageDTO);
+            case SEND_SES -> message = emailTextGeneratorService.generateSesCodeText(emailMessageDTO);
+            case CREDIT_ISSUED -> message = emailTextGeneratorService.generateCreditIssuedText(emailMessageDTO);
+            case APPLICATION_DENIED -> message = emailTextGeneratorService.generateApplicationDeniedText(emailMessageDTO);
             default -> message = "Error in bank. Sorry";
         }
+        log.debug("message create - {}", message);
         return message;
     }
 }
