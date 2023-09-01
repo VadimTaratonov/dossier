@@ -9,6 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import ru.taratonov.dossier.dto.EmailMessageDTO;
+import ru.taratonov.dossier.enums.Theme;
 
 @Service
 @RequiredArgsConstructor
@@ -35,10 +36,36 @@ public class EmailSenderService {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setFrom("credit.conveyor@mail.ru");
         simpleMailMessage.setTo(emailMessageDTO.getEmailAddress());
-        simpleMailMessage.setSubject(emailMessageDTO.getTheme().getTitle());
+        simpleMailMessage.setSubject(initializeSubjectOfMessage(emailMessageDTO.getTheme()));
         simpleMailMessage.setText(generateEmailText(emailMessageDTO));
         log.debug("simple message was initialized");
         return simpleMailMessage;
+    }
+
+    private String initializeSubjectOfMessage(Theme theme){
+        switch (theme){
+            case FINISH_REGISTRATION -> {
+                return "Завершите оформление";
+            }
+            case CREATE_DOCUMENTS -> {
+                return "Создать документы для кредитной заявки";
+            }
+            case SEND_DOCUMENTS -> {
+                return "Документы по кредитной заявке";
+            }
+            case SEND_SES -> {
+                return "Ваш персональный код для подписания документов";
+            }
+            case CREDIT_ISSUED -> {
+                return "Кредитная заявка одобрена";
+            }
+            case APPLICATION_DENIED -> {
+                return "Кредитная заявка отменена";
+            }
+            default -> {
+                return "Ошибка";
+            }
+        }
     }
 
     private MimeMessage initializeMessageWithAttachment(EmailMessageDTO emailMessageDTO) throws MessagingException {
@@ -46,7 +73,7 @@ public class EmailSenderService {
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
         mimeMessageHelper.setFrom("credit.conveyor@mail.ru");
         mimeMessageHelper.setTo(emailMessageDTO.getEmailAddress());
-        mimeMessageHelper.setSubject(emailMessageDTO.getTheme().getTitle());
+        mimeMessageHelper.setSubject(initializeSubjectOfMessage(emailMessageDTO.getTheme()));
         mimeMessageHelper.setText(generateEmailText(emailMessageDTO));
         mimeMessageHelper.addAttachment("Credit information.txt",
                 attachmentGeneratorService.generateCreditInformation(emailMessageDTO.getApplicationId()));

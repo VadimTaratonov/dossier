@@ -50,7 +50,7 @@ public class EmailTextGeneratorService {
                 "Документы для кредитного предложения " +
                         emailMessageDTO.getApplicationId() +
                         " сформированы. Далее необходимо подписать документы. Для этого перейдите по ссылке:",
-                SIGN_DOCUMENTS_LINK, ". Если хотите отменить заявку, то перейдите по ссылке:", DENY_DOCUMENTS_LINK);
+                SIGN_DOCUMENTS_LINK, "Если хотите отменить заявку, то перейдите по ссылке:", DENY_DOCUMENTS_LINK);
         log.debug("message for sign documents created");
         return message;
     }
@@ -58,9 +58,9 @@ public class EmailTextGeneratorService {
     public String generateSesCodeText(EmailMessageDTO emailMessageDTO){
         ApplicationDTO applicationDTO = restTemplateRequestsService.requestToGetApplication(emailMessageDTO.getApplicationId());
         String message = String.join(" ",
-                "Код для подписания кредитной заявки  " +
-                        emailMessageDTO.getApplicationId() +" следующий:" + applicationDTO.getSesCode() +
-                        ". Далее необходимо выслать данный код по ссылке:", CODE_DOCUMENTS_LINK);
+                "Код для подписания кредитной заявки " +
+                        emailMessageDTO.getApplicationId() +" следующий: " + applicationDTO.getSesCode() +
+                        " Далее необходимо выслать данный код по ссылке:", CODE_DOCUMENTS_LINK);
         log.debug("message for ses code created");
         return message;
     }
