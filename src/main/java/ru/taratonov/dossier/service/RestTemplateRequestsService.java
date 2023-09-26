@@ -30,7 +30,7 @@ public class RestTemplateRequestsService {
     public ApplicationDTO requestToGetApplication(Long id) {
         log.info("request to get application to deal with id {}", id);
         ResponseEntity<ApplicationDTO> responseEntity =
-                restTemplate.getForEntity(String.join("/", PATH_TO_DEAL_GET_CREDIT, id.toString()), ApplicationDTO.class);
+                restTemplate.getForEntity(PATH_TO_DEAL_GET_CREDIT.replace("{id}", id.toString()), ApplicationDTO.class);
         return Objects.requireNonNull(responseEntity.getBody());
     }
 }
