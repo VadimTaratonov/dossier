@@ -87,12 +87,17 @@ public class EmailSenderService {
         String message;
         switch (emailMessageDTO.getTheme()) {
             case FINISH_REGISTRATION ->
-                    message = emailTextGeneratorService.generateFinishRegistrationText(emailMessageDTO);
-            case CREATE_DOCUMENTS -> message = emailTextGeneratorService.generateSendDocumentsText(emailMessageDTO);
-            case SEND_DOCUMENTS -> message = emailTextGeneratorService.generateSignDocumentsText(emailMessageDTO);
-            case SEND_SES -> message = emailTextGeneratorService.generateSesCodeText(emailMessageDTO);
-            case CREDIT_ISSUED -> message = emailTextGeneratorService.generateCreditIssuedText(emailMessageDTO);
-            case APPLICATION_DENIED -> message = emailTextGeneratorService.generateApplicationDeniedText(emailMessageDTO);
+                    message = emailTextGeneratorService.generateFinishRegistrationText(emailMessageDTO.getApplicationId());
+            case CREATE_DOCUMENTS ->
+                    message = emailTextGeneratorService.generateSendDocumentsText(emailMessageDTO.getApplicationId());
+            case SEND_DOCUMENTS ->
+                    message = emailTextGeneratorService.generateSignDocumentsText(emailMessageDTO.getApplicationId());
+            case SEND_SES ->
+                    message = emailTextGeneratorService.generateSesCodeText(emailMessageDTO.getApplicationId());
+            case CREDIT_ISSUED ->
+                    message = emailTextGeneratorService.generateCreditIssuedText(emailMessageDTO.getApplicationId());
+            case APPLICATION_DENIED ->
+                    message = emailTextGeneratorService.generateApplicationDeniedText(emailMessageDTO.getApplicationId());
             default -> message = "Error in bank. Sorry";
         }
         log.debug("message create - {}", message);

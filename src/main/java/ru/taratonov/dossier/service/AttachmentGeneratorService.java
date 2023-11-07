@@ -21,7 +21,7 @@ public class AttachmentGeneratorService {
     private final RestTemplateRequestsService restTemplateRequestsService;
 
     public FileSystemResource generateCreditInformation(Long id) {
-        ApplicationDTO applicationDTO = getCreditFromDeal(id);
+        ApplicationDTO applicationDto = getCreditFromDeal(id);
         Path information;
         try {
             information = Files.createTempFile("information", ".txt");
@@ -32,16 +32,17 @@ public class AttachmentGeneratorService {
         try (FileWriter fileWriter = new FileWriter(information.toFile())) {
             fileWriter.write(String.join(" ",
                     "Credit information for",
-                    applicationDTO.getLastName(),
-                    applicationDTO.getFirstName(),
-                    applicationDTO.getMiddleName()));
-            fileWriter.write("\nLoan mount: " + applicationDTO.getAmount());
-            fileWriter.write("\nTerm: " + applicationDTO.getTerm());
-            fileWriter.write("\nMonthly payment: " + applicationDTO.getMonthlyPayment());
-            fileWriter.write("\nRate: " + applicationDTO.getRate());
-            fileWriter.write("\nPsk: " + applicationDTO.getPsk());
-            fileWriter.write("\nInsurance enable: " + applicationDTO.getInsuranceEnable());
-            fileWriter.write("\nSalary client: " + applicationDTO.getSalaryClient());
+                    applicationDto.getLastName(),
+                    applicationDto.getFirstName(),
+                    applicationDto.getMiddleName(),
+                    "\n"));
+            fileWriter.write("Loan mount: " + applicationDto.getAmount() + "\n");
+            fileWriter.write("Term: " + applicationDto.getTerm() + "\n");
+            fileWriter.write("Monthly payment: " + applicationDto.getMonthlyPayment() + "\n");
+            fileWriter.write("Rate: " + applicationDto.getRate() + "\n");
+            fileWriter.write("Psk: " + applicationDto.getPsk() + "\n");
+            fileWriter.write("Insurance enable: " + applicationDto.getInsuranceEnable() + "\n");
+            fileWriter.write("Salary client: " + applicationDto.getSalaryClient());
         } catch (IOException e) {
             log.error("error of writing data to file");
             throw new RuntimeException(e);
@@ -55,7 +56,7 @@ public class AttachmentGeneratorService {
     }
 
     public FileSystemResource generatePaymentScheduleInformation(Long id) {
-        ApplicationDTO applicationDTO = getCreditFromDeal(id);
+        ApplicationDTO applicationDto = getCreditFromDeal(id);
         Path information;
         try {
             information = Files.createTempFile("Payment schedule", ".txt");
@@ -64,12 +65,12 @@ public class AttachmentGeneratorService {
             throw new RuntimeException(e);
         }
         try (FileWriter fileWriter = new FileWriter(information.toFile())) {
-            List<PaymentScheduleElement> paymentSchedule = applicationDTO.getPaymentSchedule();
+            List<PaymentScheduleElement> paymentSchedule = applicationDto.getPaymentSchedule();
             fileWriter.write(String.join(" ",
                     "Payment schedule for",
-                    applicationDTO.getLastName(),
-                    applicationDTO.getFirstName(),
-                    applicationDTO.getMiddleName()));
+                    applicationDto.getLastName(),
+                    applicationDto.getFirstName(),
+                    applicationDto.getMiddleName()));
             for (PaymentScheduleElement paymentScheduleElement : paymentSchedule) {
                 fileWriter.write("\nPayment number: " + paymentScheduleElement.getNumber());
                 fileWriter.write("\nPayment date: " + paymentScheduleElement.getDate());
@@ -91,8 +92,8 @@ public class AttachmentGeneratorService {
     }
 
     private ApplicationDTO getCreditFromDeal(Long id) {
-        ApplicationDTO applicationDTO = restTemplateRequestsService.requestToGetApplication(id);
+        ApplicationDTO applicationDto = restTemplateRequestsService.requestToGetApplication(id);
         log.info("request to deal successfully completed");
-        return applicationDTO;
+        return applicationDto;
     }
 }
