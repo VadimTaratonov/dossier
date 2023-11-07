@@ -1,0 +1,1 @@
+Документы для кредитного предложения 10 сформированы. Далее необходимо подписать документы. Для этого перейдите по ссылке: http://localhost:7777/swagger-ui/index.html#/General%20Controller/requestSignDocument Если хотите отменить заявку, то перейдите по ссылке: http://localhost:7777/swagger-ui/index.html#/General%20Controller/denyApplication

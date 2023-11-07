@@ -1,0 +1,8 @@
+Credit information for Taratonov Vadim Nikolaevich
+Loan mount: 11000.00
+Term: 9
+Monthly payment: 1221.54
+Rate: 0.1
+Psk: 0.061
+Insurance enable: true
+Salary client: true
