@@ -4,11 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import ru.taratonov.dossier.enums.Theme;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 public class EmailMessageDTO {
     @Schema(
             description = "client's email",
